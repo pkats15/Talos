@@ -1,2 +1,3 @@
 http://www.intorobotics.com/additional-lego-ev3-resources-robotic-applications/
 https://github.com/BrianPeek/legoev3/blob/b6ef11f3e68d6a34f1b794e8ebe64009aa540b40/Lego.Ev3.Desktop/UsbCommunication.cs
+http://icube-avr.unistra.fr/en/index.php/Bytecode_USB_communication_between_RPI_and_Lego_EV3
