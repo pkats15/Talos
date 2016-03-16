@@ -1,7 +1,5 @@
-//
-// Created by user on 16/3/2016.
-//
+#include <stdio.h>
 
 int main(){
-
+    printf("Hello from C");
 }
