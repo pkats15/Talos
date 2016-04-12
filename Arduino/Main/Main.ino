@@ -1,7 +1,7 @@
 #include <Wire.h>
-int slaveAddress = 0x04;
-int metalDetector = 0x00;
-int waitRobot = 8;
+int slaveAddress = 0x04;  //Address of the arduino
+int metalDetector = 0x00; //Metal detector pin
+int waitRobot = 8;  //Time to wait between 2 runs of the bin
 void handleEV3();
 
 void setup() {
@@ -21,10 +21,12 @@ bool hasMetal() {
 }
 
 int getWeight() {
+  //Handle the weight measurement
   
 }
 
 void handleEV3() {
+  //Handle the request from EV3
   bool metal = hasMetal();
   int weight1 = getWeight();
   int weight2;
@@ -32,8 +34,8 @@ void handleEV3() {
   Wire.write(metal);
   if(metal) {
     delay(waitRobot*1000);
-    totalWeight = map(weight2-weight1,0,1024,0,500)/1000.0;
-    Serial.print(String(totalWeight)+"\0");
+    totalWeight = map(weight2-weight1,0,1024,0,500)/1000.0; //The weight difference before and after 2 runs in gramms (double)
+    Serial.print(String(totalWeight)+"\n"); //Send the weight difference over serial
   }
 }
 
