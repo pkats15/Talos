@@ -1,6 +1,7 @@
 #include <Wire.h>
 int slaveAddress = 0x04;
 int metalDetector = 0x00;
+int waitRobot = 8;
 void handleEV3();
 
 void setup() {
@@ -30,7 +31,7 @@ void handleEV3() {
   double totalWeight;
   Wire.write(metal);
   if(metal) {
-    delay(8000);
+    delay(waitRobot*1000);
     totalWeight = map(weight2-weight1,0,1024,0,500)/1000.0;
     Serial.print(String(totalWeight)+"\0");
   }
