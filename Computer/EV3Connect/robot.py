@@ -1,5 +1,6 @@
 import serial
 import time
+import struct
 #
 # class Robot:
 #     def __init__(self, port):
@@ -19,10 +20,20 @@ import time
 #         except:
 #             self.robot.close()
 
-ser = serial.Serial('COM10', 9600)
+ser = serial.Serial('COM14', 9600)
 time.sleep(2)
-while(1):
-    if ser.in_waiting:
-        print ser.in_waiting, int(ser.read(ser.in_waiting).encode('hex'),base=16)
-        time.sleep(0.5)
+try:
+    while(1):
+        d = True
+        if ser.in_waiting and d:
+            #print int(len(ser.read(1), base=16)
+            size = ord(ser.read(1))
+            # size = 0
+            print ser.in_waiting, size
+            d = False
+            ser.close()
+            break
+            time.sleep(0.5)
+except:
+    ser.close()
 #print int('656C6C', base=16)
