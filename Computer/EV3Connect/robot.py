@@ -6,11 +6,13 @@ from pprint import *
 class Robot:
     def __init__(self, port):
         self.port = port
+
     def start_connection(self):
         self.robot = serial.Serial(self.port)
         print 'Starting serial port...'
         time.sleep(1)
         print 'OK'
+
     def receive_data(self):
         # try:
         data = []
@@ -22,7 +24,6 @@ class Robot:
         tmp = self.robot.read(self.robot.in_waiting)
         for i in range(len(tmp)):
             data.append(ord(tmp[i]))
-            print i, data[i]
         title_spot = 7
         title_size = data[title_spot-1]
         value_spot = title_spot+title_size+2
@@ -36,6 +37,7 @@ class Robot:
         #     print 'ERROR OCCURED'
         #     self.robot.close()
         #     return -1, -1
+
     def send_data(self, title, value):
         tmp1 = []
         tmp1.insert(1, 0) #Second byte = useless
@@ -57,13 +59,15 @@ class Robot:
             lst = title_spot + i + 1
         tmp1.insert(lst, 0)
         tmp1.insert(value_spot, int(value))
-        pprint(tmp1)
         tmp2 = bytearray(tmp1)
         self.robot.write(tmp2)
+
     def stop(self):
         self.robot.close()
 
 # try:
 r = Robot('COM14')
 r.start_connection()
-r.send_data('talos', False)
+t,v = r.receive_data()
+time.sleep(0.3)
+r.send_data(t, v)
