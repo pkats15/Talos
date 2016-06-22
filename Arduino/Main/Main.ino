@@ -1,41 +1,51 @@
+#include <Adafruit_CharacterOLED.h>
+
 #include <Wire.h>
-int slaveAddress = 0x04;  //Address of the arduino
-int metalDetector = 0x00; //Metal detector pin
-int waitRobot = 8;  //Time to wait between 2 runs of the bin
-void handleEV3();
 
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  Wire.begin(slaveAddress);
-  Wire.onRequest(handleEV3);
+#define SLAVE_ADDRESS 0x04
+boolean has_metal = false;
+boolean has_afm = false;
+boolean is_robot_in_use = false;
+String inputString = "";         // a string to hold incoming data
+boolean stringComplete = false;
+Adafruit_CharacterOLED lcd(OLED_V2, 2, 3, 4, 5, 6, 7, 8);
+String lcdString, pastLcdString="";
+
+
+void setup(){
+    Serial.begin(9600); // start serial for output
+    lcd.begin(16, 2);
+}
+void loop(){
+  if(analogRead(3)>500){
+    has_metal = true;
+  }else{
+    has_metal = false;
+  }
+  if(!has_afm){
+    lcdString = "Insert AFM";
+  }
+  if(stringComplete){
+    stringComplete = false;
+    if(inputString == "metal\n"){
+      if(has_metal){
+        Serial.println("1");
+      }else{
+        Serial.println("0");
+      }
+    }
+  }
+  if(lcdString != pastLcdString){
+    pastLcdString = lcdString;
+    lcd.clear();
+    lcd.print(lcdString);
+  }
+  delay(50);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
-}
-
-bool hasMetal() {
-  return analogRead(metalDetector);
-}
-
-int getWeight() {
-  //Handle the weight measurement
-  
-}
-
-void handleEV3() {
-  //Handle the request from EV3
-  bool metal = hasMetal();
-  int weight1 = getWeight();
-  int weight2;
-  double totalWeight;
-  Wire.write(metal);
-  if(metal) {
-    delay(waitRobot*1000);
-    totalWeight = map(weight2-weight1,0,1024,0,500)/1000.0; //The weight difference before and after 2 runs in gramms (double)
-    Serial.print(String(totalWeight)+"\n"); //Send the weight difference over serial
+void serialEvent(){
+  while (Serial.available() && !stringComplete) {
+    inputString = Serial.readString();
+    stringComplete = true;
   }
 }
-

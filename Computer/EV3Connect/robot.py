@@ -66,8 +66,20 @@ class Robot:
         self.robot.close()
 
 # try:
-r = Robot('COM14')
+ard_port = 'COM20'
+ard = serial.Serial(ard_port)
+time.sleep(1)
+r = Robot('COM15')
 r.start_connection()
-t,v = r.receive_data()
-time.sleep(0.3)
-r.send_data(t, v)
+while(True):
+	ard.write("metal\n")
+	time.sleep(0.1)
+	while(not ard.in_waiting):
+		time.sleep(0.05)
+	n = ard.in_waiting
+	print(n)
+	s = ard.read(n)
+	print(s)
+	r.send_data('metal', bool(int(s)))
+	time.sleep(0.1)
+r.send_data('metal', True)
