@@ -2,7 +2,19 @@ import serial
 import time
 import struct
 from pprint import *
+import json
 #
+
+afm = {'1234':0}
+
+def set_weight(a, w):
+    afm[a] = w
+def get_weight(a):
+    return afm[a]
+def isValid(a):
+    return a in afm.keys
+
+
 class Robot:
     def __init__(self, port):
         self.port = port
@@ -72,14 +84,22 @@ time.sleep(1)
 r = Robot('COM15')
 r.start_connection()
 while(True):
-	ard.write("metal\n")
 	time.sleep(0.1)
 	while(not ard.in_waiting):
 		time.sleep(0.05)
 	n = ard.in_waiting
-	print(n)
 	s = ard.read(n)
-	print(s)
-	r.send_data('metal', bool(int(s)))
-	time.sleep(0.1)
-r.send_data('metal', True)
+	d = json.loads(s)
+    if 'pass' in d.keys and isValid(d['pass']):
+        while True:
+            ard.write("metal\n")
+        	time.sleep(0.05)
+        	while(not ard.in_waiting):
+        		time.sleep(0.01)
+        	n2 = ard.in_waiting
+        	s2 = ard.read(n)
+        	d2 = json.loads(s)
+            if('metal' in d2.keys):
+                r.send_data('metal', d2['metal'])
+                if d2['metal']:
+                    break
